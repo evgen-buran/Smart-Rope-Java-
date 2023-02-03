@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Smart Rope SP-23</string>
+    <string name="adapter_not_supported">Bluetooth adapter doesn\'t available</string>
+    <string name="turnOnAdapter">Turn on Bluetooth</string>
+    <string name="turnOffAdapter">Turn off adapter</string>
+    <string name="settings">Settings</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/pref"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="withText|always" />
+    <item
+        android:id="@+id/onOffBtooth"
+        android:title="@string/turnOnAdapter"
+        android:icon="@drawable/ic_baseline_bluetooth_disabled_24"
+        app:showAsAction="withText|always" />
+
+    <item
+        android:id="@+id/searchDevice"
+        android:title="Search device"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/pairedDevice"
+        android:title="Paired device"
+        app:showAsAction="never" />
+</menu>
