@@ -7,15 +7,18 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 public class BluetoothManager {
+    static final String TAG = "myLog";
     static public final int REQUEST_CODE_ENABLE = 10;
     static final int LENGTH_MSG = 5;
     static final byte END_MSG = 10;
@@ -23,13 +26,18 @@ public class BluetoothManager {
     static private BluetoothAdapter adapter;
     static private Context context;
     static private ArrayList<BluetoothDevice> devicesArray = new ArrayList<>();
+    static private ArrayList<BluetoothDevice> devicesBoundArray = new ArrayList<>();
+
     static UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
     static InputStream inputStream;
     static Thread thread;
 
-
     public static ArrayList<BluetoothDevice> getDevicesArray() {
         return devicesArray;
+    }
+
+    public static ArrayList<BluetoothDevice> getDevicesBoundArray() {
+        return devicesBoundArray;
     }
 
     static void initAdapter() {
@@ -37,6 +45,18 @@ public class BluetoothManager {
         if (adapter == null) {
             showToast(context.getString(R.string.adapter_not_supported));
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    static ArrayList<BluetoothDevice>prepareBoundDevices() {
+        Set<BluetoothDevice> set = adapter.getBondedDevices();
+        for (BluetoothDevice device : set) {
+            if (device != null) {
+                devicesBoundArray.add(device);
+            }
+        }
+        Log.d(TAG, "prepareBoundDevices: " + devicesBoundArray.size());
+        return devicesBoundArray;
     }
 
     static boolean isEnableAdapter() {
@@ -83,16 +103,21 @@ public class BluetoothManager {
         context = _context;
     }
 
+    @SuppressLint("MissingPermission")
     public static void connectDevice(BluetoothDevice device) {
         if (device != null) {
             try {
                 @SuppressLint("MissingPermission")
                 BluetoothSocket socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
                 inputStream = socket.getInputStream();
+                socket.connect();
+                socket.connect();
+
                 getData();
 
             } catch (IOException e) {
-                e.printStackTrace();}
+                e.printStackTrace();
+            }
 
         }
     }
@@ -106,7 +131,8 @@ public class BluetoothManager {
                 while (!thread.isInterrupted()) {
                     try {
                         if (inputStream != null) {
-                            if (inputStream.available() >= 0) {
+                            int data = inputStream.available();
+                            if (data >= 0) {
                                 byte[] bytes = new byte[inputStream.available()];
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {

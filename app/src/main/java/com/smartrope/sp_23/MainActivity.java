@@ -13,19 +13,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Set;
+//todo нижнее меню с переходами. рабочий первый экран: счетчик, время, калории, РПМ (класс тренировка)
 public class MainActivity extends AppCompatActivity {
+    final String TAG = "myLog";
     MenuItem onAdapterItem;
     BluetoothReceiver receiver;
-    ListView listDevices;
-    BtDeviceAdapter adapter;
+    ListView listDevices, listDevicesBound;
+    BtDeviceAdapter adapterSearchedDevices, adapterBoundDevices;
+    Set<BluetoothDevice> tempSetDevices;
     AlertDialog.Builder dialog;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -34,7 +39,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BluetoothManager.setContext(this);
         BluetoothManager.initAdapter();
-        adapter = new BtDeviceAdapter(this, R.layout.item_list_devices, BluetoothManager.getDevicesArray());
+        progressDialog = new ProgressDialog(this);
+        adapterSearchedDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
+                BluetoothManager.getDevicesArray());
+        adapterBoundDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
+                BluetoothManager.getDevicesBoundArray());
     }
 
     @Override
@@ -68,14 +77,16 @@ public class MainActivity extends AppCompatActivity {
                 if (!BluetoothManager.isDiscovery()) {
                     BluetoothManager.startDiscovery();
                 } else BluetoothManager.cancelDiscovery();
-
                 receiver = new BluetoothReceiver();
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
                 filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
                 filter.addAction(BluetoothDevice.ACTION_FOUND);
-
                 registerReceiver(receiver, filter);
+                break;
+            case R.id.pairedDevice:
+                BluetoothManager.prepareBoundDevices();
+                showListBoundedDevices();
                 break;
         }
         return true;
@@ -95,20 +106,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO реализовать метод показа списка найденных устройств
-     void showListDevices() {
-        dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Found devices");
+    void showListDevices() {
+        View view = setShowList(adapterSearchedDevices);
+        setAlertDialog(view);
+    }
+
+    void showListBoundedDevices() {
+        View view = setShowList(adapterBoundDevices);
+        setAlertDialog(view);
+
+    }
+
+    @NonNull
+    private View setShowList(BtDeviceAdapter adapter) {
         View view = getLayoutInflater().inflate(R.layout.list_devices, null);
         listDevices = view.findViewById(R.id.listDevices);
         listDevices.setAdapter(adapter);
-        listDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                BluetoothDevice device = BluetoothManager.getDevicesArray().get(i);
-                BluetoothManager.connectDevice(device);
-            }
-        });
+        listDevices.setOnItemClickListener(onClickerItemListDevices);
+        return view;
     }
+
+    private void setAlertDialog(View view) {
+        dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Found devices");
+        dialog.setView(view);
+        dialog.setNegativeButton("OK", null);
+        dialog.create();
+        dialog.show();
+    }
+
+
+    private AdapterView.OnItemClickListener onClickerItemListDevices = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            BluetoothDevice device = BluetoothManager.getDevicesArray().get(i);
+            BluetoothManager.connectDevice(device);
+        }
+    };
 
     public class BluetoothReceiver extends BroadcastReceiver {
         String action;
@@ -119,16 +153,20 @@ public class MainActivity extends AppCompatActivity {
             android.app.AlertDialog dialog = new ProgressDialog(context);
             switch (action) {
                 case (BluetoothAdapter.ACTION_DISCOVERY_STARTED):
-                    dialog = ProgressDialog.show(context, "Start search", "Please wait");
+                    Log.d(TAG, "onReceive: ACTION_DISCOVERY_STARTED");
+                    progressDialog = ProgressDialog.show(context, "Start search", "Please wait");
                     break;
                 case (BluetoothAdapter.ACTION_DISCOVERY_FINISHED):
-                    dialog.dismiss();
+                    Log.d(TAG, "onReceive: ACTION_DISCOVERY_FINISHED");
+                    progressDialog.dismiss();
                     showListDevices();
                     break;
                 case (BluetoothDevice.ACTION_FOUND):
+                    Log.d(TAG, "onReceive: ACTION_FOUND");
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (device != null) {
                         BluetoothManager.getDevicesArray().add(device);
+                        Log.d(TAG, "onReceive: device added");
                     }
                     break;
             }
