@@ -2,8 +2,13 @@
     <string name="app_name">Smart Rope SP-23</string>
     <string name="adapter_not_supported">Bluetooth adapter doesn\'t available</string>
     <string name="turnOnAdapter">Turn on Bluetooth</string>
-    <string name="turnOffAdapter">Turn off adapter</string>
+    <string name="turnOffAdapter">Turn off Bluetooth</string>
     <string name="settings">Settings</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment!!!</string>
+    <string name="just_jump">Just Jump</string>
+    <string name="double_jump">Double Jump</string>
+    <string name="hiit">HIIT</string>
+    <string name="statistic">Statistic</string>
+    <string name="params">Params</string>
 </resources>

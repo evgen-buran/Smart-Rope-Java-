@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Rope SP-23</string>
+    <string name="adapter_not_supported">Bluetooth адаптер недоступен</string>
+    <string name="turnOnAdapter">Включить Bluetooth</string>
+    <string name="turnOffAdapter">Выключить Bluetooth</string>
+    <string name="settings">Настройки</string>
+    <string name="just_jump">Простые</string>
+    <string name="double_jump">Двойные</string>
+    <string name="hiit">Табата</string>
+    <string name="statistic">Статистика</string>
+    <string name="params">Параметры</string>
+</resources>

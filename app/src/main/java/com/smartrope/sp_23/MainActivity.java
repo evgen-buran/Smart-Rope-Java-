@@ -4,6 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -20,17 +27,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.Set;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 //todo нижнее меню с переходами. рабочий первый экран: счетчик, время, калории, РПМ (класс тренировка)
 public class MainActivity extends AppCompatActivity {
     final String TAG = "myLog";
     MenuItem onAdapterItem;
     BluetoothReceiver receiver;
-    ListView listDevices, listDevicesBound;
+    ListView listDevices;
     BtDeviceAdapter adapterSearchedDevices, adapterBoundDevices;
-    Set<BluetoothDevice> tempSetDevices;
     AlertDialog.Builder dialog;
     ProgressDialog progressDialog;
+
+    NavController controller;
+    NavHostFragment hostFragment;
+    BottomNavigationView bottomNavigationView;
+    FragmentManager fragmentManager;
+
 
 
     @Override
@@ -44,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothManager.getDevicesArray());
         adapterBoundDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
                 BluetoothManager.getDevicesBoundArray());
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bottom);
+        AppBarConfiguration barConfiguration = new AppBarConfiguration.Builder(
+                R.id.justJumpNavigation,
+                R.id.doubleJumpNavigation,
+                R.id.hiitNavigation,
+                R.id.paramsNavigation,
+                R.id.statisticNavigation).build();
+        fragmentManager = getSupportFragmentManager();
+        hostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
+        controller = hostFragment.getNavController();
+        bottomNavigationView = findViewById(R.id.nav_bottom);
+        NavigationUI.setupWithNavController(bottomNavigationView, controller);
+
+
     }
 
     @Override
