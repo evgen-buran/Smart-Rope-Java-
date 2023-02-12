@@ -48,7 +48,7 @@ public class BluetoothManager {
     }
 
     @SuppressLint("MissingPermission")
-    static ArrayList<BluetoothDevice>prepareBoundDevices() {
+    static ArrayList<BluetoothDevice> prepareBoundDevices() {
         Set<BluetoothDevice> set = adapter.getBondedDevices();
         for (BluetoothDevice device : set) {
             if (device != null) {

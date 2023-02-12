@@ -6,17 +6,17 @@
         android:id="@+id/justJumpNavigation"
         android:title="@string/just_jump"
         android:icon="@drawable/rope_icon_1"
-        app:showAsAction="always" />
+       />
     <item
         android:id="@+id/doubleJumpNavigation"
         android:title="@string/double_jump"
         android:icon="@drawable/rope_icon_2"
-        app:showAsAction="always" />
+         />
     <item
         android:id="@+id/hiitNavigation"
         android:title="@string/hiit"
         android:icon="@drawable/rope_icon_hiit"
-        app:showAsAction="always" />
+        />
     <item
         android:id="@+id/paramsNavigation"
         android:title="@string/params"
