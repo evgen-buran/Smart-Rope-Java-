@@ -111,7 +111,6 @@ public class BluetoothManager {
                 BluetoothSocket socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
                 inputStream = socket.getInputStream();
                 socket.connect();
-                socket.connect();
 
                 getData();
 

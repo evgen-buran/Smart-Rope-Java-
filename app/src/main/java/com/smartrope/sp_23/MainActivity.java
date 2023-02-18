@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,21 +59,14 @@ public class MainActivity extends AppCompatActivity {
         adapterBoundDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
                 BluetoothManager.getDevicesBoundArray());
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bottom);
-        AppBarConfiguration barConfiguration = new AppBarConfiguration.Builder(
-                R.id.justJumpNavigation,
-                R.id.doubleJumpNavigation,
-                R.id.hiitNavigation,
-                R.id.paramsNavigation,
-                R.id.statisticNavigation).build();
         fragmentManager = getSupportFragmentManager();
         hostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
         controller = hostFragment.getNavController();
         bottomNavigationView = findViewById(R.id.nav_bottom);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
+//       bottomNavigationView.setOnItemSelectedListener();
 
-
-
+        Fragment justJumpFragment = fragmentManager.findFragmentByTag("justJumpFragmentTag");
 
     }
 
@@ -143,17 +136,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void showListBoundedDevices() {
-        View view = setShowList(adapterBoundDevices);
+        View view = setShowBoundedList(adapterBoundDevices);
         setAlertDialog(view);
 
     }
 
+    //подготовить список найденных и связанных устройств (2 метода)
     @NonNull
     private View setShowList(BtDeviceAdapter adapter) {
         View view = getLayoutInflater().inflate(R.layout.list_devices, null);
         listDevices = view.findViewById(R.id.listDevices);
         listDevices.setAdapter(adapter);
         listDevices.setOnItemClickListener(onClickerItemListDevices);
+        return view;
+    }
+
+    @NonNull
+    private View setShowBoundedList(BtDeviceAdapter adapter) {
+        View view = getLayoutInflater().inflate(R.layout.list_devices, null);
+        listDevices = view.findViewById(R.id.listDevices);
+        listDevices.setAdapter(adapter);
+        listDevices.setOnItemClickListener(onClickerItemBoundedListDevices);
         return view;
     }
 
@@ -166,11 +169,18 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
+    // слушатель кликов найденных и связанных устройств (2 метода)
     private AdapterView.OnItemClickListener onClickerItemListDevices = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice device = BluetoothManager.getDevicesArray().get(i);
+            BluetoothManager.connectDevice(device);
+        }
+    };
+    private AdapterView.OnItemClickListener onClickerItemBoundedListDevices = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            BluetoothDevice device = BluetoothManager.getDevicesBoundArray().get(i);
             BluetoothManager.connectDevice(device);
         }
     };
