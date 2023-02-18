@@ -121,7 +121,7 @@ public class BluetoothManager {
         }
     }
 
-    private static void getData() {
+  static void getData() {
         Handler handler = new Handler();
         byte[] buffer = new byte[LENGTH_MSG];
         thread = new Thread(new Runnable() {
