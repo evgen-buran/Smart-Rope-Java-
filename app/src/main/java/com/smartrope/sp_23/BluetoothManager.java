@@ -9,7 +9,11 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,7 +116,7 @@ public class BluetoothManager {
                 inputStream = socket.getInputStream();
                 socket.connect();
 
-                getData();
+//                getData();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,9 +125,9 @@ public class BluetoothManager {
         }
     }
 
-  static void getData() {
+  static void getData(Fragment fragment) {
         Handler handler = new Handler();
-        byte[] buffer = new byte[LENGTH_MSG];
+//        byte[] buffer = new byte[LENGTH_MSG];
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,14 +140,15 @@ public class BluetoothManager {
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {
                                     if (bytes[i] == END_MSG) {
-                                        String msg = new String(buffer);
+
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                showToast("Jump");
+                                              //   вывести в главный поток
+
                                             }
                                         });
-                                    } else buffer[i] = bytes[i];
+                                    }// else buffer[i] = bytes[i];
                                 }
                             }
                         }

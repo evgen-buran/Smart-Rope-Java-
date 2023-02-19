@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +31,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
-//todo нижнее меню с переходами. рабочий первый экран: счетчик, время, калории, РПМ (класс тренировка)
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     final String TAG = "myLog";
     MenuItem onAdapterItem;
@@ -64,11 +67,8 @@ public class MainActivity extends AppCompatActivity {
         controller = hostFragment.getNavController();
         bottomNavigationView = findViewById(R.id.nav_bottom);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
-//       bottomNavigationView.setOnItemSelectedListener();
-
-        Fragment justJumpFragment = fragmentManager.findFragmentByTag("justJumpFragmentTag");
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

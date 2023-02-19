@@ -9,7 +9,8 @@
         android:id="@+id/justJumpNavigation"
         android:name="com.smartrope.sp_23.JustJumpFragment"
         android:label="@string/just_jump"
-        tools:layout="@layout/fragment_just_jump" >
+        android:tag="findFragmentByTag"
+        tools:layout="@layout/fragment_just_jump">
         <action
             android:id="@+id/action_justJumpNavigation_to_doubleJumpNavigation"
             app:destination="@id/doubleJumpNavigation" />
@@ -18,7 +19,7 @@
         android:id="@+id/doubleJumpNavigation"
         android:name="com.smartrope.sp_23.DoubleJumpFragment"
         android:label="@string/double_jump"
-        tools:layout="@layout/fragment_double_jump" >
+        tools:layout="@layout/fragment_double_jump">
         <action
             android:id="@+id/action_doubleJumpNavigation_to_hiitNavigation"
             app:destination="@id/hiitNavigation" />
@@ -27,7 +28,7 @@
         android:id="@+id/hiitNavigation"
         android:name="com.smartrope.sp_23.HIITFragment"
         android:label="@string/hiit"
-        tools:layout="@layout/fragment_hiit" >
+        tools:layout="@layout/fragment_hiit">
         <action
             android:id="@+id/action_hiitNavigation_to_paramsNavigation"
             app:destination="@id/paramsNavigation" />
@@ -36,8 +37,7 @@
         android:id="@+id/paramsNavigation"
         android:name="com.smartrope.sp_23.ParamsFragment"
         android:label="@string/params"
-        tools:layout="@layout/fragment_params"
-        >
+        tools:layout="@layout/fragment_params">
         <action
             android:id="@+id/action_paramsNavigation_to_statisticNavigation"
             app:destination="@id/statisticNavigation" />
@@ -46,7 +46,7 @@
         android:id="@+id/statisticNavigation"
         android:name="com.smartrope.sp_23.StatisticFragment"
         android:label="@string/statistic"
-        tools:layout="@layout/fragment_statistic" >
+        tools:layout="@layout/fragment_statistic">
         <action
             android:id="@+id/action_statisticNavigation_to_justJumpNavigation"
             app:destination="@id/justJumpNavigation" />
