@@ -63,10 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothManager.getDevicesBoundArray());
 
         fragmentManager = getSupportFragmentManager();
-        hostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
-        controller = hostFragment.getNavController();
         bottomNavigationView = findViewById(R.id.nav_bottom);
-        NavigationUI.setupWithNavController(bottomNavigationView, controller);
     }
 
 
