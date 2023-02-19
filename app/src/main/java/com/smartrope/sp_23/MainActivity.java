@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder dialog;
     ProgressDialog progressDialog;
 
-    NavController controller;
-    NavHostFragment hostFragment;
     BottomNavigationView bottomNavigationView;
     FragmentManager fragmentManager;
 
