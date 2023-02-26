@@ -36,6 +36,10 @@ public class BluetoothManager {
     static InputStream inputStream;
     static Thread thread;
 
+    static JustJumpFragment justJumpFragment = new JustJumpFragment();
+    static DoubleJumpFragment doubleJumpFragment;
+    static HIITFragment hiitFragment;
+
     public static ArrayList<BluetoothDevice> getDevicesArray() {
         return devicesArray;
     }
@@ -115,9 +119,6 @@ public class BluetoothManager {
                 BluetoothSocket socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
                 inputStream = socket.getInputStream();
                 socket.connect();
-
-//                getData();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,7 +126,18 @@ public class BluetoothManager {
         }
     }
 
-  static void getData(Fragment fragment) {
+    static void getData() {
+       /* switch (fragment.getTag()) {
+            case "1":
+                justJumpFragment = (JustJumpFragment) fragment;
+                break;
+            case "2":
+                doubleJumpFragment = (DoubleJumpFragment) fragment;
+                break;
+            case "3":
+                hiitFragment = (HIITFragment) fragment;
+                break;
+        }*/
         Handler handler = new Handler();
 //        byte[] buffer = new byte[LENGTH_MSG];
         thread = new Thread(new Runnable() {
@@ -144,7 +156,7 @@ public class BluetoothManager {
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                              //   вывести в главный поток
+                                                justJumpFragment.tvCounter.setText("0001");
 
                                             }
                                         });

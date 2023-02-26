@@ -1,7 +1,8 @@
 package com.smartrope.sp_23;
 
 public class JustJumpTraining {
-    private int countJumps;
+     int countJumps;
+
 
     public JustJumpTraining() {
         this.countJumps = 0;
