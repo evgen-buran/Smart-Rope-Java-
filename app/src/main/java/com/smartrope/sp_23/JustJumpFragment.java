@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class JustJumpFragment extends Fragment {
-    JustJumpTraining justJumpTraining;
+  Training training;
     TextView
             tvCounter,
             tvTimer,
@@ -25,7 +25,7 @@ public class JustJumpFragment extends Fragment {
         tvKcal = view.findViewById(R.id.tvKcal);
         tvRPM = view.findViewById(R.id.tvRPM);
         tvTimer = view.findViewById(R.id.tvTimer);
-        justJumpTraining = new JustJumpTraining();
+        training = new Training();
 
         return view;
     }

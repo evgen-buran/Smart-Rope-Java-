@@ -1,4 +1,6 @@
 package com.smartrope.sp_23;
+//todo нельзя переключаться на другие вкладки если не закончена тренировка (isStarting): спрашивать об окончании тренировки
+// или вставить кнопку завершения тренировки
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     DoubleJumpFragment doubleJumpFragment;
     HIITFragment hiitFragment;
 
-    JustJumpTraining justJumpTraining;
-
     BottomNavigationView bottomNavigationView;
     FragmentManager fragmentManager;
     int currentItem;
@@ -59,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothManager.getDevicesBoundArray());
 
         justJumpFragment = new JustJumpFragment();
-        justJumpTraining = new JustJumpTraining();
-
         doubleJumpFragment = new DoubleJumpFragment();
         hiitFragment = new HIITFragment();
 
@@ -68,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.nav_bottom);
         replaceFragment(justJumpFragment, fragmentManager, "1");
         bottomNavigationView.setOnItemSelectedListener(onBottomClicker);
+        currentItem = R.id.justJumpNavigation;
 
     }
 
@@ -76,12 +75,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            currentItem = 0;
+
 
             switch (item.getItemId()) {
                 case R.id.justJumpNavigation:
                     replaceFragment(justJumpFragment, fragmentManager, "1");
-                    justJumpFragment.tvCounter.setText("0001");
                     currentItem = R.id.justJumpNavigation;
                     break;
                 case R.id.doubleJumpNavigation:
@@ -180,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //TODO реализовать метод показа списка найденных устройств
     void showListDevices() {
         View view = setShowList(adapterSearchedDevices);
         setAlertDialog(view);
@@ -226,8 +223,7 @@ public class MainActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice device = BluetoothManager.getDevicesArray().get(i);
             BluetoothManager.connectDevice(device);
-            //todo сюда вставить текущий фрагмент
-            BluetoothManager.getData();
+            BluetoothManager.getData(getCurrentFragment(currentItem));
         }
     };
     private AdapterView.OnItemClickListener onClickerItemBoundedListDevices = new AdapterView.OnItemClickListener() {
@@ -235,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice device = BluetoothManager.getDevicesBoundArray().get(i);
             BluetoothManager.connectDevice(device);
-            BluetoothManager.getData();
+            BluetoothManager.getData(getCurrentFragment(currentItem));
         }
     };
 

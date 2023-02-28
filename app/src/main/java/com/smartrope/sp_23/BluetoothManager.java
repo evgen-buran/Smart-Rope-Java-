@@ -126,8 +126,8 @@ public class BluetoothManager {
         }
     }
 
-    static void getData() {
-       /* switch (fragment.getTag()) {
+    static void getData(Fragment fragment) {
+        switch (fragment.getTag()) {
             case "1":
                 justJumpFragment = (JustJumpFragment) fragment;
                 break;
@@ -137,7 +137,7 @@ public class BluetoothManager {
             case "3":
                 hiitFragment = (HIITFragment) fragment;
                 break;
-        }*/
+        }
         Handler handler = new Handler();
 //        byte[] buffer = new byte[LENGTH_MSG];
         thread = new Thread(new Runnable() {
@@ -152,11 +152,12 @@ public class BluetoothManager {
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {
                                     if (bytes[i] == END_MSG) {
-
+                                        justJumpFragment.training.countJumpsIncrement(justJumpFragment.training.JUST_MULTIPLY);
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                justJumpFragment.tvCounter.setText("0001");
+                                               justJumpFragment.tvCounter.setText(String.valueOf(justJumpFragment.training.getCountJumps()));
+                                               justJumpFragment.tvKcal.setText(justJumpFragment.training.getCountJumps()+"");
 
                                             }
                                         });

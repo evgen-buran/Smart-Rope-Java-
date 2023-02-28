@@ -11,4 +11,5 @@
     <string name="hiit">HIIT</string>
     <string name="statistic">Statistic</string>
     <string name="params">Params</string>
+    <string name="noData">--</string>
 </resources>
