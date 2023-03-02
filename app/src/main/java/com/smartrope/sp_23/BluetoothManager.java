@@ -40,6 +40,8 @@ public class BluetoothManager {
     static DoubleJumpFragment doubleJumpFragment;
     static HIITFragment hiitFragment;
 
+    static Training training;
+
     public static ArrayList<BluetoothDevice> getDevicesArray() {
         return devicesArray;
     }
@@ -130,12 +132,15 @@ public class BluetoothManager {
         switch (fragment.getTag()) {
             case "1":
                 justJumpFragment = (JustJumpFragment) fragment;
+                training = justJumpFragment.training;
                 break;
             case "2":
                 doubleJumpFragment = (DoubleJumpFragment) fragment;
+                training = justJumpFragment.training;
                 break;
             case "3":
                 hiitFragment = (HIITFragment) fragment;
+                training = justJumpFragment.training;
                 break;
         }
         Handler handler = new Handler();
@@ -152,17 +157,15 @@ public class BluetoothManager {
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {
                                     if (bytes[i] == END_MSG) {
-                                        justJumpFragment.training.countJumpsIncrement(justJumpFragment.training.JUST_MULTIPLY);
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                               justJumpFragment.tvCounter.setText(String.valueOf(justJumpFragment.training.getCountJumps()));
-                                               justJumpFragment.tvKcal.setText(justJumpFragment.training.getCountJumps()+"");
-
+                                                justJumpFragment.tvCounter.setText(String.valueOf(justJumpFragment.training.getCountJumps()));
                                             }
                                         });
-                                    }// else buffer[i] = bytes[i];
-                                }
+                                        break;
+                                    }
+                                }// else buffer[i] = bytes[i];
                             }
                         }
                     } catch (IOException e) {
