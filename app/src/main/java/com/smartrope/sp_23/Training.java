@@ -10,10 +10,11 @@ public class Training {
     int countJumps;
     int rpm;
 
-    boolean isStarting;
+    private boolean isStarting;
 
-    int min, sec, ms; //минуты, секунды, миллисекунды
-    long currentTime, startTime;
+    private int min, sec, ms; //минуты, секунды, миллисекунды
+    private long currentTime, startTime;
+    private boolean isSignal;
 
 
     public Training() {
@@ -29,9 +30,13 @@ public class Training {
     public void setStarting(boolean starting) {
         isStarting = starting;
     }
+
     //множитель для режимов прыжков: 1 - обычные прыжки, 2 - двойные прыжки
     public int jumpsIncrement(int multiply) {
-        return multiply * countJumps++;
+        if (isStarting)
+            return multiply * countJumps++;
+        else
+            return countJumps;
     }
 
     public void setCountJumps(int countJumps) {
@@ -50,8 +55,9 @@ public class Training {
     long millis() {
         return new Date().getTime();
     }
+
     //----------------------СЕКУНДОМЕР-----------------------------------------
-   public void stopwatch(long currentTime) {
+    public void stopwatch(long currentTime) {
         long over;
         //время для отображения: millis - время уже прошедшее на момент срабатывания прерывания(startTime) и разницу раскидываем по минутам, секундам и т.д.
 

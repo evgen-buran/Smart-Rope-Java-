@@ -35,6 +35,8 @@ public class BluetoothManager {
     static UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
     static InputStream inputStream;
     static Thread thread;
+    static boolean isSignal = false;
+    static long millis = 0;
 
     static JustJumpFragment justJumpFragment = new JustJumpFragment();
     static DoubleJumpFragment doubleJumpFragment;
@@ -144,7 +146,7 @@ public class BluetoothManager {
                 break;
         }
         Handler handler = new Handler();
-//        byte[] buffer = new byte[LENGTH_MSG];
+        //        byte[] buffer = new byte[LENGTH_MSG];
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -157,12 +159,14 @@ public class BluetoothManager {
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {
                                     if (bytes[i] == END_MSG) {
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                justJumpFragment.tvCounter.setText(String.valueOf(justJumpFragment.training.getCountJumps()));
-                                            }
-                                        });
+                                        isSignal = true;
+                                        millis = System.currentTimeMillis();
+                                        // отправить сигнал и миллис в метод тренировки.
+                                        // в тренировке уже делать рассчеты
+                                        training.setStarting(isSignal);
+
+                                        isSignal = false;
+
                                         break;
                                     }
                                 }// else buffer[i] = bytes[i];
