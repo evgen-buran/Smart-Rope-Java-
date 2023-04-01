@@ -1,6 +1,10 @@
 package com.smartrope.sp_23;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class Training {
     final int JUST_MULTIPLY = 1;
@@ -10,11 +14,15 @@ public class Training {
     int countJumps;
     int rpm;
 
-    private boolean isStarting;
 
     private int min, sec, ms; //минуты, секунды, миллисекунды
     private long currentTime, startTime;
     private boolean isSignal;
+    private Thread threadChrono;
+    private boolean isStarting = false;
+    private long timeOver = 0;
+    private int over;
+    MutableLiveData<String> liveDataChrono = new MutableLiveData<>();
 
 
     public Training() {
@@ -33,10 +41,9 @@ public class Training {
 
     //множитель для режимов прыжков: 1 - обычные прыжки, 2 - двойные прыжки
     public int jumpsIncrement(int multiply) {
-        if (isStarting)
-            return multiply * countJumps++;
-        else
-            return countJumps;
+
+        return ++countJumps * multiply;
+
     }
 
     public void setCountJumps(int countJumps) {
@@ -57,14 +64,35 @@ public class Training {
     }
 
     //----------------------СЕКУНДОМЕР-----------------------------------------
-    public void stopwatch(long currentTime) {
-        long over;
-        //время для отображения: millis - время уже прошедшее на момент срабатывания прерывания(startTime) и разницу раскидываем по минутам, секундам и т.д.
+    public void Chronometer() {
+//        isStarting = !isStarting;
+        if(threadChrono == null) threadChrono = new Thread(new Runnable() {
 
-        over = currentTime % 3600000;
-        min = (int) (over / 60000);
-        over = over % 60000;
-        sec = (int) (over / 1000);
-        ms = (int) (over % 1000) / 10; //оставить две цифры
+            @Override
+
+            public void run() {
+                while (isStarting) {
+                    try {
+                        TimeUnit.MICROSECONDS.sleep(680);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (isStarting) timeOver++;
+                    over = (int) timeOver % 3600000;
+                    min = over / 60000;
+                    over = over % 60000;
+                    sec = over / 1000;
+                    ms = (over % 1000) / 10;
+                    liveDataChrono.postValue(String.format("%02d:%02d.%02d", min, sec, ms));
+
+                }
+                if (!isStarting) threadChrono.interrupt();
+            }
+        });
+        threadChrono.start();
+    }
+
+    public LiveData<String> getLiveDataChrono() {
+        return liveDataChrono;
     }
 }

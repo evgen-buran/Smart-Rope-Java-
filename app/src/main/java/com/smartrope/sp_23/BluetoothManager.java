@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +52,12 @@ public class BluetoothManager {
 
     public static ArrayList<BluetoothDevice> getDevicesBoundArray() {
         return devicesBoundArray;
+    }
+    public static MutableLiveData<Boolean> liveDataSignal = new MutableLiveData<Boolean>();
+
+
+    static LiveData<Boolean> getLiveDataSignal() {
+        return liveDataSignal;
     }
 
     static void initAdapter() {
@@ -159,13 +167,15 @@ public class BluetoothManager {
                                 inputStream.read(bytes);
                                 for (int i = 0; i < bytes.length; i++) {
                                     if (bytes[i] == END_MSG) {
+
                                         isSignal = true;
+                                        training.setStarting(true);
+                                        training.Chronometer();
+
                                         millis = System.currentTimeMillis();
                                         // отправить сигнал и миллис в метод тренировки.
+                                        liveDataSignal.postValue(isSignal);
                                         // в тренировке уже делать рассчеты
-                                        training.setStarting(isSignal);
-
-                                        isSignal = false;
 
                                         break;
                                     }

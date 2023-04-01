@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import android.os.Handler;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 //todo  getData устанавливает сигнал true при срабатывании магнита. И тут же его устанавливает в False
 // до следующего срабатывания
 // необходимо при true вызывать метод (например увеличения счетчика)
@@ -25,6 +28,8 @@ public class JustJumpFragment extends Fragment {
             tvKcal,
             tvRPM;
     Thread thread;
+    LiveData<Boolean> liveDataSignal;
+    LiveData<String> liveDataChrono;
 
 
     @Override
@@ -36,29 +41,25 @@ public class JustJumpFragment extends Fragment {
         tvRPM = view.findViewById(R.id.tvRPM);
         tvTimer = view.findViewById(R.id.tvTimer);
         training = new Training();
-//        Handler handler = new Handler();
+        liveDataSignal = BluetoothManager.getLiveDataSignal();
+        liveDataChrono = training.getLiveDataChrono();
 
-    /*    thread = new Thread(new Runnable() {
-
+        liveDataSignal.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void run() {
-
-                while (!thread.isInterrupted()) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (training.isStarting()) {
-                                Log.d(TAG, "run: dfdf");
-                                tvCounter.setText(training.jumpsIncrement(1));
-                            }
-                        }
-                    });
-
-
-                }
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) training.jumpsIncrement(training.JUST_MULTIPLY);
+                tvCounter.setText(String.valueOf(training.getCountJumps()));
+                Log.d(TAG, "onChanged: " + training.getCountJumps());
             }
-        });*/
+        });
 
+        liveDataChrono.observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String time) {
+                tvTimer.setText(time);
+                Log.d(TAG, "onChanged: " + time);
+            }
+        });
 
         return view;
     }
