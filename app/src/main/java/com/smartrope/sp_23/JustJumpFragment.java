@@ -1,17 +1,16 @@
 package com.smartrope.sp_23;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 //todo  getData устанавливает сигнал true при срабатывании магнита. И тут же его устанавливает в False
@@ -27,6 +26,7 @@ public class JustJumpFragment extends Fragment {
             tvTimer,
             tvKcal,
             tvRPM;
+    Button btnReset;
     Thread thread;
     LiveData<Boolean> liveDataSignal;
     LiveData<String> liveDataChrono;
@@ -40,36 +40,27 @@ public class JustJumpFragment extends Fragment {
         tvKcal = view.findViewById(R.id.tvKcal);
         tvRPM = view.findViewById(R.id.tvRPM);
         tvTimer = view.findViewById(R.id.tvTimer);
+        btnReset =view.findViewById(R.id.btnJustReset);
         training = new Training();
+//        liveDataSignal = BluetoothManager.getLiveDataSignal();
         liveDataSignal = BluetoothManager.getLiveDataSignal();
         liveDataChrono = training.getLiveDataChrono();
 
-        liveDataSignal.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) training.jumpsIncrement(training.JUST_MULTIPLY);
-                tvCounter.setText(String.valueOf(training.getCountJumps()));
-                Log.d(TAG, "onChanged: " + training.getCountJumps());
-            }
+
+        btnReset.setOnClickListener(view1 -> {
+        training.resetTraining();
         });
 
-        liveDataChrono.observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String time) {
-                tvTimer.setText(time);
-                Log.d(TAG, "onChanged: " + time);
-            }
+        liveDataSignal.observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean && training.isStarting()) training.jumpsIncrement(training.JUST_MULTIPLY);
+            tvCounter.setText(String.valueOf(training.getCountJumps()));
+            Log.d(TAG, "onChanged: " + training.getCountJumps());
         });
+
+
+        liveDataChrono.observe(getViewLifecycleOwner(), time -> tvTimer.setText(time));
 
         return view;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-       /* training.jumpsIncrement(1);
-        tvCounter.setText(training.getCountJumps());*/
-    }
-
 
 }

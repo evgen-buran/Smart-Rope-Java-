@@ -8,9 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -28,6 +25,7 @@ public class BluetoothManager {
     static public final int REQUEST_CODE_ENABLE = 10;
     static final int LENGTH_MSG = 5;
     static final byte END_MSG = 10;
+    static final String ADRESS_DEVICE = "98:DA:60:01:AB:F5";
 
     static private BluetoothAdapter adapter;
     static private Context context;
@@ -71,7 +69,7 @@ public class BluetoothManager {
     static ArrayList<BluetoothDevice> prepareBoundDevices() {
         Set<BluetoothDevice> set = adapter.getBondedDevices();
         for (BluetoothDevice device : set) {
-            if (device != null) {
+            if (device != null && device.getAddress().equals(ADRESS_DEVICE)) {
                 devicesBoundArray.add(device);
             }
         }
@@ -170,12 +168,10 @@ public class BluetoothManager {
 
                                         isSignal = true;
                                         training.setStarting(true);
-                                        training.Chronometer();
+                                        training.chronometer();
 
-                                        millis = System.currentTimeMillis();
-                                        // отправить сигнал и миллис в метод тренировки.
+                                        // отправить сигнал  в тренировке уже делать рассчеты
                                         liveDataSignal.postValue(isSignal);
-                                        // в тренировке уже делать рассчеты
 
                                         break;
                                     }

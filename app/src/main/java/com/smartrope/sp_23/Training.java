@@ -1,5 +1,7 @@
 package com.smartrope.sp_23;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -7,6 +9,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class Training {
+    final String TAG = "myLog";
     final int JUST_MULTIPLY = 1;
     final int DOUBLE_MULTIPLY = 2;
     final boolean START_TRAINING = true;
@@ -23,11 +26,16 @@ public class Training {
     private long timeOver = 0;
     private int over;
     MutableLiveData<String> liveDataChrono = new MutableLiveData<>();
+    MutableLiveData<Integer> liveDataSignal = new MutableLiveData<>();
 
 
     public Training() {
         this.countJumps = 0;
         this.rpm = 0;
+        isStarting = false;
+    }
+
+    public void resetTraining() {
         isStarting = false;
     }
 
@@ -64,35 +72,50 @@ public class Training {
     }
 
     //----------------------СЕКУНДОМЕР-----------------------------------------
-    public void Chronometer() {
+    public void chronometer() {
 //        isStarting = !isStarting;
-        if(threadChrono == null) threadChrono = new Thread(new Runnable() {
+        if (threadChrono == null) {
 
-            @Override
+            threadChrono = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (isStarting) {
+                        try {
+                            TimeUnit.MICROSECONDS.sleep(680);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        timeOver++;
+                        over = (int) timeOver % 3600000;
+                        min = over / 60000;
+                        over = over % 60000;
+                        sec = over / 1000;
+                        ms = (over % 1000) / 10;
+                        Log.d(TAG, "state: " + threadChrono.getState());
+                        liveDataChrono.postValue(String.format("%02d:%02d.%02d", min, sec, ms));
 
-            public void run() {
-                while (isStarting) {
-                    try {
-                        TimeUnit.MICROSECONDS.sleep(680);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                    if (isStarting) timeOver++;
-                    over = (int) timeOver % 3600000;
-                    min = over / 60000;
-                    over = over % 60000;
-                    sec = over / 1000;
-                    ms = (over % 1000) / 10;
-                    liveDataChrono.postValue(String.format("%02d:%02d.%02d", min, sec, ms));
-
+                    if (!isStarting) {
+                        min = sec = ms = 0;
+                        liveDataChrono.postValue(String.format("%02d:%02d.%02d", min, sec, ms));
+                        threadChrono.interrupt();
+                        Log.d(TAG, "state: " + threadChrono.getState());
+                    }
                 }
-                if (!isStarting) threadChrono.interrupt();
-            }
-        });
-        threadChrono.start();
+            });
+            Log.d(TAG, "FINISH: " + threadChrono.getState());
+            if (!threadChrono.isAlive()) threadChrono.start();
+        }
     }
 
     public LiveData<String> getLiveDataChrono() {
         return liveDataChrono;
     }
+
+
+
+
+
+
 }
+

@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,6 +31,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = "myLog";
+
     MenuItem onAdapterItem;
     BluetoothReceiver receiver;
     ListView listDevices;
@@ -52,11 +54,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BluetoothManager.setContext(this);
         BluetoothManager.initAdapter();
+
         progressDialog = new ProgressDialog(this);
+
         adapterSearchedDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
                 BluetoothManager.getDevicesArray());
         adapterBoundDevices = new BtDeviceAdapter(this, R.layout.item_list_devices,
                 BluetoothManager.getDevicesBoundArray());
+        BluetoothManager.prepareBoundDevices();
 
         justJumpFragment = new JustJumpFragment();
         doubleJumpFragment = new DoubleJumpFragment();
@@ -67,16 +72,11 @@ public class MainActivity extends AppCompatActivity {
         replaceFragment(justJumpFragment, fragmentManager, "1");
         bottomNavigationView.setOnItemSelectedListener(onBottomClicker);
         currentItem = R.id.justJumpNavigation;
-
     }
-
 
     NavigationBarView.OnItemSelectedListener onBottomClicker = new NavigationBarView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
-
             switch (item.getItemId()) {
                 case R.id.justJumpNavigation:
                     replaceFragment(justJumpFragment, fragmentManager, "1");
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             Fragment fragment = getCurrentFragment(currentItem);
-            Log.d(TAG, "onNavigationItemSelected: "+fragment.getTag());
+            Log.d(TAG, "onNavigationItemSelected: " + fragment.getTag());
             return true;
         }
     };
@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
     public Fragment getCurrentFragment(int idItem) {
         switch (idItem) {
             case (R.id.justJumpNavigation):
-                Log.d(TAG, "getCurrentFragment: "+justJumpFragment);
+                Log.d(TAG, "getCurrentFragment: " + justJumpFragment);
                 return justJumpFragment;
             case (R.id.doubleJumpNavigation):
-                Log.d(TAG, "getCurrentFragment: "+doubleJumpFragment);
+                Log.d(TAG, "getCurrentFragment: " + doubleJumpFragment);
                 return doubleJumpFragment;
             case (R.id.hiitNavigation):
-                Log.d(TAG, "getCurrentFragment: "+hiitFragment);
+                Log.d(TAG, "getCurrentFragment: " + hiitFragment);
                 return hiitFragment;
         }
         return null;
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.onOffBtooth:
+                //включить блютуз, если выключен.
                 if (!BluetoothManager.isEnableAdapter()) {
                     //noinspection deprecation
                     startActivityForResult
@@ -145,6 +146,39 @@ public class MainActivity extends AppCompatActivity {
                     onAdapterItem.setTitle(R.string.turnOnAdapter);
                     onAdapterItem.setIcon(R.drawable.ic_baseline_bluetooth_disabled_24);
                 }
+                Log.d(TAG, "getDevicesBoundArray: "+ BluetoothManager.getDevicesBoundArray().size());
+                //проверить список сопряженных устройств и включить устройство
+//                if (BluetoothManager.getDevicesBoundArray().size() > 0) {
+//                    for (BluetoothDevice device : BluetoothManager.getDevicesBoundArray()) {
+//                        if (device.getAddress().equals(BluetoothManager.ADRESS_DEVICE)) {
+//                            BluetoothManager.connectDevice(device);
+//                            BluetoothManager.getData(getCurrentFragment(currentItem));
+//                            break;
+//                        }
+//                    }
+//                    //если нет в сопряженных, начать поиск. Найти устройство с адресом и его включить.
+//                } else {
+                   /* if (!BluetoothManager.isDiscovery()) {
+                        BluetoothManager.startDiscovery();
+                    } else BluetoothManager.cancelDiscovery();
+                    receiver = new BluetoothReceiver();
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+                    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                    filter.addAction(BluetoothDevice.ACTION_FOUND);
+                    registerReceiver(receiver, filter);*/
+//                }
+
+                Log.d(TAG, "getDevicesArray: "+ BluetoothManager.getDevicesArray().size());
+//                if(BluetoothManager.getDevicesArray().size()>0) {
+//                    for (BluetoothDevice device : BluetoothManager.getDevicesArray()) {
+//                        if (device.getAddress().equals(BluetoothManager.ADRESS_DEVICE)) {
+//                            BluetoothManager.connectDevice(device);
+//                            BluetoothManager.getData(getCurrentFragment(currentItem));
+//                            break;
+//                        }
+//                    }
+//                }
                 break;
             case R.id.searchDevice:
                 if (!BluetoothManager.isDiscovery()) {
@@ -247,18 +281,18 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onReceive: ACTION_DISCOVERY_STARTED");
                     progressDialog = ProgressDialog.show(context, "Start search", "Please wait");
                     break;
+                case (BluetoothDevice.ACTION_FOUND):
+                    Log.d(TAG, "onReceive: ACTION_FOUND");
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device.getAddress().equals(BluetoothManager.ADRESS_DEVICE)) {
+                        BluetoothManager.getDevicesArray().add(device);
+                        Log.d(TAG, "onReceive: device added");
+                    }
+                    break;
                 case (BluetoothAdapter.ACTION_DISCOVERY_FINISHED):
                     Log.d(TAG, "onReceive: ACTION_DISCOVERY_FINISHED");
                     progressDialog.dismiss();
                     showListDevices();
-                    break;
-                case (BluetoothDevice.ACTION_FOUND):
-                    Log.d(TAG, "onReceive: ACTION_FOUND");
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (device != null) {
-                        BluetoothManager.getDevicesArray().add(device);
-                        Log.d(TAG, "onReceive: device added");
-                    }
                     break;
             }
 
