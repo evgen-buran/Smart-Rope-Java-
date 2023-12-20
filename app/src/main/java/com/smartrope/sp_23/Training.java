@@ -103,9 +103,10 @@ public class Training {
                     }
                 }
             });
-            Log.d(TAG, "FINISH: " + threadChrono.getState());
-            if (!threadChrono.isAlive()) threadChrono.start();
         }
+
+        Log.d(TAG, "FINISH: " + threadChrono.getState());
+        if (!threadChrono.isAlive()) threadChrono.start();
     }
 
     public LiveData<String> getLiveDataChrono() {
