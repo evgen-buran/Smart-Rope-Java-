@@ -16,9 +16,9 @@
 
 Приложение написано на Java.
 Используются технологии:
--Threads
--Работа с Bluetooth-адаптером телефона
--Broadcast Receiver
--ViewModel
--LiveData
--Bottom Navigation
+- Threads
+- Работа с Bluetooth-адаптером телефона
+- Broadcast Receiver
+- ViewModel
+- LiveData
+- Bottom Navigation
