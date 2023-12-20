@@ -40,15 +40,14 @@ public class JustJumpFragment extends Fragment {
         tvKcal = view.findViewById(R.id.tvKcal);
         tvRPM = view.findViewById(R.id.tvRPM);
         tvTimer = view.findViewById(R.id.tvTimer);
-        btnReset =view.findViewById(R.id.btnJustReset);
+        btnReset = view.findViewById(R.id.btnJustReset);
         training = new Training();
-//        liveDataSignal = BluetoothManager.getLiveDataSignal();
         liveDataSignal = BluetoothManager.getLiveDataSignal();
         liveDataChrono = training.getLiveDataChrono();
 
 
         btnReset.setOnClickListener(view1 -> {
-        training.resetTraining();
+            training.resetTraining();
         });
 
         liveDataSignal.observe(getViewLifecycleOwner(), aBoolean -> {
